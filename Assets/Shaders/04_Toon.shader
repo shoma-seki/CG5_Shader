@@ -49,7 +49,7 @@ Shader "Unlit/02_Lambert"
 				fixed4 color = _Color;
                 
                 float toonColor = smoothstep(0.3, 0.35, intensity);
-                if(toonColor <= 0)
+                if(toonColor <= 0.2)
                 {
                     toonColor = 0.2;
                 }
