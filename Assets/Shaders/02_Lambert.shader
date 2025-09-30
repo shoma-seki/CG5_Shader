@@ -1,5 +1,10 @@
 Shader "Unlit/02_Lambert"
 {
+	Properties
+	{
+		_Color("Color",Color) = (1,0,0,1)
+	}
+
 	SubShader
 	{
 		Pass
@@ -38,13 +43,21 @@ Shader "Unlit/02_Lambert"
 
 			fixed4 frag(v2f i) : SV_TARGET
 			{
+				//アンビエント
+				fixed4 ambient = _Color * 0.3 * _LightColor0;
+				//ディフューズ
+
+				//スペキュラ
                 float3 eyeDir = normalize(_WorldSpaceCameraPos.xyz - i.worldPosition);
                 float3 lightDir = normalize(_WorldSpaceLightPos0);
                 i.normal = normalize(i.normal);
                 float3 reflectDir = -lightDir + 2 * i.normal * dot(i.normal, lightDir);
                 fixed4 specular = pow(saturate(dot(reflectDir, eyeDir)), 20) * _LightColor0;
                 
-				return specular;
+				//Phong
+				fixed4 phong =ambient + specular;
+
+				return phong;
 			}
 			ENDCG
 		}
