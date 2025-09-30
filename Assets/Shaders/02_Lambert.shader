@@ -15,6 +15,7 @@ Shader "Unlit/02_Lambert"
             struct appdata
             {
                 float4 vertex : POSITION;
+				float3 normal : NORMAL;
             };
 
             struct v2f
@@ -29,6 +30,8 @@ Shader "Unlit/02_Lambert"
 				v2f o;
 				o.vertex = UnityObjectToClipPos(v.vertex);
                 o.worldPosition = mul(unity_ObjectToWorld, v.vertex);
+
+				o.normal = UnityObjectToWorldNormal(v.normal);
                 
 				return o;
 			}
