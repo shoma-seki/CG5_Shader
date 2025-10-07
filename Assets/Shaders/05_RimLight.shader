@@ -1,4 +1,4 @@
-Shader "Unlit/02_Lambert"
+Shader "Unlit/05_RimLight"
 {
 	Properties
 	{
@@ -46,19 +46,20 @@ Shader "Unlit/02_Lambert"
 				//アンビエント
 				//fixed4 ambient = _Color * 0.3 * _LightColor0;
 				//ディフューズ
-				float intensity=
-                    saturate(dot(normalize(i.normal),_WorldSpaceLightPos0));
+				float iDot = dot(normalize(i.normal),_WorldSpaceLightPos0);
+				float intensity = saturate(iDot);
 				fixed4 color = _Color;
                 fixed4 diffuse = color * intensity * _LightColor0;
 				//スペキュラ
-                // float3 eyeDir = normalize(_WorldSpaceCameraPos.xyz - i.worldPosition);
-                // float3 lightDir = normalize(_WorldSpaceLightPos0);
-                // i.normal = normalize(i.normal);
-                // float3 reflectDir = -lightDir + 2 * i.normal * dot(i.normal, lightDir);
-                // fixed4 specular = pow(saturate(dot(reflectDir, eyeDir)), 20) * _LightColor0;
+                float3 eyeDir = normalize(_WorldSpaceCameraPos.xyz - i.worldPosition);
+                i.normal = normalize(i.normal);
+				float pDot = dot(i.normal, eyeDir);
+				float sIntensity = saturate(pDot);
+				sIntensity = smoothstep(1.0, 0.0, sIntensity);
+                fixed4 specular = pow(sIntensity, 5) * _LightColor0;
                 
 				//Phong
-				fixed4 phong = ambient + diffuse + specular;
+				fixed4 phong = diffuse + specular;
 
 				return phong;
 			}
