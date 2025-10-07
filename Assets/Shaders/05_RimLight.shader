@@ -3,6 +3,7 @@ Shader "Unlit/05_RimLight"
 	Properties
 	{
 		_Color("Color",Color) = (1,0,0,1)
+		_MainTex ("Texture", 2D) = "white" {}
 	}
 
 	SubShader
@@ -21,6 +22,7 @@ Shader "Unlit/05_RimLight"
             {
                 float4 vertex : POSITION;
 				float3 normal : NORMAL;
+                float2 uv: TEXCOORD0;
             };
 
             struct v2f
@@ -28,8 +30,12 @@ Shader "Unlit/05_RimLight"
                 float4 vertex : SV_POSITION;
                 float3 worldPosition : TEXCOORD1;
 				float3 normal : NORMAL;
+                float2 uv : TEXCOORD0;  
             };
-
+			
+            sampler2D _MainTex;
+			float4 _MainTex_ST;
+			
 			v2f vert(appdata v)
 			{
 				v2f o;
@@ -37,29 +43,60 @@ Shader "Unlit/05_RimLight"
                 o.worldPosition = mul(unity_ObjectToWorld, v.vertex);
 
 				o.normal = UnityObjectToWorldNormal(v.normal);
+
+                o.uv = v.uv;
                 
 				return o;
 			}
 
 			fixed4 frag(v2f i) : SV_TARGET
 			{
+				//テクスチャ
+				//tiling
+				float2 tiling = _MainTex_ST.xy;
+
+				//offset
+				float2 offset = _MainTex_ST.zw;
+
+				fixed4 col = tex2D(_MainTex, i.uv * tiling + offset);
+
 				//アンビエント
 				//fixed4 ambient = _Color * 0.3 * _LightColor0;
+
 				//ディフューズ
 				float iDot = dot(normalize(i.normal),_WorldSpaceLightPos0);
 				float intensity = saturate(iDot);
 				fixed4 color = _Color;
-                fixed4 diffuse = color * intensity * _LightColor0;
+                float toonColor = smoothstep(0.01, 0.015, intensity);
+				if(toonColor >= 0.2)
+				{
+					toonColor = 0.2;
+				}
+                // if(toonColor <= 0.2)
+                // {
+                //     toonColor = 0.2;
+                // }
+				fixed4 toon = color * toonColor;
+
 				//スペキュラ
-                float3 eyeDir = normalize(_WorldSpaceCameraPos.xyz - i.worldPosition);
-                i.normal = normalize(i.normal);
+				float3 eyeDir = normalize(_WorldSpaceCameraPos.xyz - i.worldPosition);
+				float3 lightDir = normalize(_WorldSpaceLightPos0);
+				i.normal = normalize(i.normal);
+				float lDot = dot(i.normal, lightDir);
+				lDot = step(0.9, lDot);
+				float3 reflectDir = -lightDir + 2 * i.normal * lDot;
+				float sDot = dot(reflectDir, eyeDir);
+				sDot = step(0.9, sDot);
+				fixed4 specular = pow(saturate(sDot), 20) * _LightColor0;
+				
+				//リムライト
 				float pDot = dot(i.normal, eyeDir);
 				float sIntensity = saturate(pDot);
 				sIntensity = smoothstep(1.0, 0.0, sIntensity);
-                fixed4 specular = pow(sIntensity, 5) * _LightColor0;
+                fixed4 rim = pow(sIntensity, 5) * fixed4(0,0,1,1);
                 
 				//Phong
-				fixed4 phong = diffuse + specular;
+				fixed4 phong =  toon + specular + col;
 
 				return phong;
 			}
