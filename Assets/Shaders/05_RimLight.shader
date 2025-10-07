@@ -61,22 +61,22 @@ Shader "Unlit/05_RimLight"
 				fixed4 col = tex2D(_MainTex, i.uv * tiling + offset);
 
 				//アンビエント
-				//fixed4 ambient = _Color * 0.3 * _LightColor0;
+				fixed4 ambient = _Color * -1.5 * _LightColor0;
 
 				//ディフューズ
 				float iDot = dot(normalize(i.normal),_WorldSpaceLightPos0);
 				float intensity = saturate(iDot);
 				fixed4 color = _Color;
-                float toonColor = smoothstep(0.01, 0.015, intensity);
-				if(toonColor >= 0.2)
-				{
-					toonColor = 0.2;
-				}
+                float toonColor = smoothstep(0.2, 0.3, intensity);
+                if(toonColor <= 0.2)
+                {
+                    toonColor = -3;
+                }
                 // if(toonColor <= 0.2)
                 // {
                 //     toonColor = 0.2;
                 // }
-				fixed4 toon = color * toonColor;
+				fixed4 toon = color * toonColor *  _LightColor0;
 
 				//スペキュラ
 				float3 eyeDir = normalize(_WorldSpaceCameraPos.xyz - i.worldPosition);
@@ -92,11 +92,19 @@ Shader "Unlit/05_RimLight"
 				//リムライト
 				float pDot = dot(i.normal, eyeDir);
 				float sIntensity = saturate(pDot);
-				sIntensity = smoothstep(1.0, 0.0, sIntensity);
-                fixed4 rim = pow(sIntensity, 5) * fixed4(0,0,1,1);
+				sIntensity = 1.0 - sIntensity;
+				if(sIntensity > 0.6)
+				{
+					sIntensity = 100;
+				}
+				if(sIntensity  < 0.2)
+				{
+					sIntensity = 0;
+				}
+                fixed4 rim = pow(sIntensity, 100) * fixed4(0,0,0.9,1);
                 
 				//Phong
-				fixed4 phong =  toon + specular + col;
+				fixed4 phong = ambient + specular + col + toon + rim;
 
 				return phong;
 			}
