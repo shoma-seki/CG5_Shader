@@ -83,10 +83,10 @@ Shader "Unlit/05_RimLight"
 				float3 lightDir = normalize(_WorldSpaceLightPos0);
 				i.normal = normalize(i.normal);
 				float lDot = dot(i.normal, lightDir);
-				lDot = step(0.9, lDot);
+				lDot = smoothstep(0.9, 0.95, lDot);
 				float3 reflectDir = -lightDir + 2 * i.normal * lDot;
 				float sDot = dot(reflectDir, eyeDir);
-				sDot = step(0.9, sDot);
+				sDot = smoothstep(0.9, 0.95, sDot);
 				fixed4 specular = pow(saturate(sDot), 20) * _LightColor0;
 				
 				//リムライト
@@ -95,16 +95,16 @@ Shader "Unlit/05_RimLight"
 				sIntensity = 1.0 - sIntensity;
 				if(sIntensity > 0.6)
 				{
-					sIntensity = 100;
+					sIntensity = 1;
 				}
-				if(sIntensity  < 0.2)
+				if(sIntensity < 0.2)
 				{
 					sIntensity = 0;
 				}
                 fixed4 rim = pow(sIntensity, 100) * fixed4(0,0,0.9,1);
                 
 				//Phong
-				fixed4 phong = ambient + specular + col + toon + rim;
+				fixed4 phong = specular + ambient + col + (1 - rim) * toon;
 
 				return phong;
 			}
