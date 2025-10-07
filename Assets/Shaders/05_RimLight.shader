@@ -103,8 +103,13 @@ Shader "Unlit/05_RimLight"
 				}
                 fixed4 rim = pow(sIntensity, 100) * fixed4(0,0,0.9,1);
                 
+				if(sIntensity >= 0.9)
+				{
+					return rim;
+				}
+
 				//Phong
-				fixed4 phong = specular + ambient + col + (1 - rim) * toon;
+				fixed4 phong = specular + ambient + col + toon;
 
 				return phong;
 			}
