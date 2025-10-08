@@ -88,6 +88,11 @@ Shader "Unlit/05_RimLight"
 				float sDot = dot(reflectDir, eyeDir);
 				sDot = smoothstep(0.9, 0.95, sDot);
 				fixed4 specular = pow(saturate(sDot), 20) * _LightColor0;
+
+				if(sDot >= 0.9)
+				{
+					return specular;
+				}
 				
 				//リムライト
 				float pDot = dot(i.normal, eyeDir);
@@ -109,7 +114,7 @@ Shader "Unlit/05_RimLight"
 				}
 
 				//Phong
-				fixed4 phong = specular + ambient + col + toon;
+				fixed4 phong = ambient + col + toon;
 
 				return phong;
 			}
