@@ -85,10 +85,10 @@ Shader "Unlit/enemyBox"
 				float3 lightDir = normalize(_WorldSpaceLightPos0);
 				i.normal = normalize(i.normal);
 				float lDot = dot(i.normal, lightDir);
-				lDot = smoothstep(0.9, 0.95, lDot);
+				lDot = step(0.9, lDot);
 				float3 reflectDir = -lightDir + 2 * i.normal * lDot;
 				float sDot = dot(reflectDir, eyeDir);
-				sDot = smoothstep(0.9, 0.95, sDot);
+				sDot = step(0.9, sDot);
 				fixed4 specular = pow(saturate(sDot), 20) * _LightColor0;
 				
 				//リムライト
@@ -104,6 +104,11 @@ Shader "Unlit/enemyBox"
 					sIntensity = 0;
 				}
                 fixed4 rim = pow(sIntensity, 100) * fixed4(0,0,0,1);
+
+				if(sIntensity >= 0.999999)
+				{
+					//return rim;
+				}
                 
 				//Phong
 				fixed4 phong = ambient + col + toon + rim;
