@@ -72,10 +72,6 @@ Shader "Unlit/05_RimLight"
                 {
                     toonColor = -3;
                 }
-                // if(toonColor <= 0.2)
-                // {
-                //     toonColor = 0.2;
-                // }
 				fixed4 toon = color * toonColor *  _LightColor0;
 
 				//スペキュラ
@@ -83,10 +79,10 @@ Shader "Unlit/05_RimLight"
 				float3 lightDir = normalize(_WorldSpaceLightPos0);
 				i.normal = normalize(i.normal);
 				float lDot = dot(i.normal, lightDir);
-				lDot = smoothstep(0.9, 0.95, lDot);
+				lDot = step(0.9, lDot);
 				float3 reflectDir = -lightDir + 2 * i.normal * lDot;
 				float sDot = dot(reflectDir, eyeDir);
-				sDot = smoothstep(0.9, 0.95, sDot);
+				sDot = step(0.9, sDot);
 				fixed4 specular = pow(saturate(sDot), 20) * _LightColor0;
 
 				if(sDot >= 0.9)
