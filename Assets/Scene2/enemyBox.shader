@@ -63,7 +63,7 @@ Shader "Unlit/enemyBox"
 				fixed4 col = tex2D(_MainTex, i.uv * tiling + offset);
 
 				//アンビエント
-				fixed4 ambient = _Color * 0 * _LightColor0;
+				fixed4 ambient = _Color * -1 * _LightColor0;
 
 				//ディフューズ
 				float iDot = dot(normalize(i.normal),_WorldSpaceLightPos0);
@@ -90,6 +90,11 @@ Shader "Unlit/enemyBox"
 				float sDot = dot(reflectDir, eyeDir);
 				sDot = step(0.9, sDot);
 				fixed4 specular = pow(saturate(sDot), 20) * _LightColor0;
+
+				if(sDot >= 0.9)
+				{
+					//return specular;
+				}
 				
 				//リムライト
 				float pDot = dot(i.normal, eyeDir);
@@ -99,19 +104,19 @@ Shader "Unlit/enemyBox"
 				{
 					sIntensity = 1;
 				}
-				if(sIntensity  < 0.2)
+				if(sIntensity < 0.2)
 				{
 					sIntensity = 0;
 				}
-                fixed4 rim = pow(sIntensity, 100) * fixed4(0,0,0,1);
-
-				if(sIntensity >= 0.999999)
+                fixed4 rim = pow(sIntensity, 100) * fixed4(0,0,0.9,1);
+                
+				if(sIntensity >= 0.9)
 				{
 					//return rim;
 				}
-                
+
 				//Phong
-				fixed4 phong = ambient + col + toon + rim;
+				fixed4 phong = ambient + col + toon;
 
 				return phong;
 			}

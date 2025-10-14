@@ -1,4 +1,4 @@
-Shader "Unlit/enemy"
+Shader "Unlit/tree"
 {
 	Properties
 	{
@@ -63,22 +63,22 @@ Shader "Unlit/enemy"
 				fixed4 col = tex2D(_MainTex, i.uv * tiling + offset);
 
 				//アンビエント
-				fixed4 ambient = _Color * -1.5 * _LightColor0;
+				fixed4 ambient = _Color * -400 * _LightColor0;
 
 				//ディフューズ
 				float iDot = dot(normalize(i.normal),_WorldSpaceLightPos0);
 				float intensity = saturate(iDot);
 				fixed4 color = _Color;
-                float toonColor = smoothstep(0.2, 0.3, intensity);
-                if(toonColor <= 0.2)
+                float toonColor = smoothstep(0.7, 0.8, intensity);
+                if(toonColor >= 0.1)
                 {
-                    toonColor = -3;
+                    toonColor = -10;
                 }
                 // if(toonColor <= 0.2)
                 // {
                 //     toonColor = 0.2;
                 // }
-				fixed4 toon = color * toonColor *  _LightColor0;
+				fixed4 toon = color * toonColor * _LightColor0;
 
 				//スペキュラ
 				float3 eyeDir = normalize(_WorldSpaceCameraPos.xyz - i.worldPosition);
@@ -93,7 +93,7 @@ Shader "Unlit/enemy"
 
 				if(sDot >= 0.9)
 				{
-					return specular;
+					//return specular;
 				}
 				
 				//リムライト
@@ -110,15 +110,50 @@ Shader "Unlit/enemy"
 				}
                 fixed4 rim = pow(sIntensity, 100) * fixed4(0,0,0,1);
                 
-				if(sIntensity >= 0.9)
+				if(sIntensity >= 0.99999)
 				{
-					return rim;
+					//return rim;
 				}
 
 				//Phong
 				fixed4 phong = ambient + col + toon;
 
 				return phong;
+			}
+			ENDCG
+		}
+
+		Pass
+		{
+			Tags{ "LightMode" = "ShadowCaster" }
+
+			CGPROGRAM
+			#pragma vertex vert
+			#pragma fragment frag
+			#include "UnityCG.cginc"
+
+			struct appdata
+            {
+                float4 vertex : POSITION;
+				float3 normal : NORMAL;
+                float2 texcoord: TEXCOORD0;
+            };
+
+			struct v2f
+			{
+				V2F_SHADOW_CASTER;
+			};
+
+			v2f vert (appdata v)
+			{
+				v2f o;
+				TRANSFER_SHADOW_CASTER_NORMALOFFSET(o)
+				return o;
+			}
+
+			fixed4 frag (v2f i) : SV_TARGET
+			{
+				SHADOW_CASTER_FRAGMENT(i)
 			}
 			ENDCG
 		}
