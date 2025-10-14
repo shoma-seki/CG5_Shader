@@ -8,8 +8,6 @@ Shader "Unlit/enemy"
 
 	SubShader
 	{		
-		Cull Off
-
 		Pass
 		{
 			CGPROGRAM

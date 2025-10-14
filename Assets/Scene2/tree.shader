@@ -8,15 +8,17 @@ Shader "Unlit/tree"
 
 	SubShader
 	{		
-		Cull Off
+		Tags { "RenderType" = "Opaque" }
 
 		Pass
 		{
+			Tags{ "LightMode" = "ForwardBase" }
 			CGPROGRAM
 			#pragma vertex vert
 			#pragma fragment frag
 			#include "UnityCG.cginc"
             #include "Lighting.cginc"
+			#include "AutoLight.cginc"
 
             fixed4  _Color;
 
@@ -30,9 +32,11 @@ Shader "Unlit/tree"
             struct v2f
             {
                 float4 vertex : SV_POSITION;
+				float distance : TEXCOORD0;
                 float3 worldPosition : TEXCOORD1;
 				float3 normal : NORMAL;
                 float2 uv : TEXCOORD0;  
+				SHADOW_COORDS(2)
             };
 			
             sampler2D _MainTex;
@@ -43,10 +47,16 @@ Shader "Unlit/tree"
 				v2f o;
 				o.vertex = UnityObjectToClipPos(v.vertex);
                 o.worldPosition = mul(unity_ObjectToWorld, v.vertex);
+				float3 worldPos = mul(unity_ObjectToWorld, v.vertex).xyz;
 
 				o.normal = UnityObjectToWorldNormal(v.normal);
 
                 o.uv = v.uv;
+
+				//カメラとの距離
+				o.distance = distance(worldPosition.xyz, unity_CameraWorldPos);
+
+				TRANSFER_SHADOW(o);
                 
 				return o;
 			}
@@ -72,7 +82,7 @@ Shader "Unlit/tree"
                 float toonColor = smoothstep(0.7, 0.8, intensity);
                 if(toonColor >= 0.1)
                 {
-                    toonColor = -10;
+                    toonColor = 0;
                 }
                 // if(toonColor <= 0.2)
                 // {
@@ -117,6 +127,15 @@ Shader "Unlit/tree"
 
 				//Phong
 				fixed4 phong = ambient + col + toon;
+				
+				//shadow
+				float shadow = SHADOW_ATTENUATION(i);
+				phong.rgb *= shadow;
+
+				float fog = smoothstep(1,0,distance);
+
+				phong.r += fog;
+				phong.g += fog;
 
 				return phong;
 			}
