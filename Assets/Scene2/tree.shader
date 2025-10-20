@@ -32,10 +32,10 @@ Shader "Unlit/tree"
             struct v2f
             {
                 float4 vertex : SV_POSITION;
-				float distance : TEXCOORD0;
-                float3 worldPosition : TEXCOORD1;
+				float distance : TEXCOORD1;
+                float3 worldPosition : TEXCOORD2;
 				float3 normal : NORMAL;
-                float2 uv : TEXCOORD0;  
+                float2 uv : TEXCOORD3;  
 				SHADOW_COORDS(2)
             };
 			
@@ -54,7 +54,7 @@ Shader "Unlit/tree"
                 o.uv = v.uv;
 
 				//カメラとの距離
-				o.distance = distance(worldPosition.xyz, unity_CameraWorldPos);
+				o.distance = distance(worldPos.xyz, _WorldSpaceCameraPos.xyz);
 
 				TRANSFER_SHADOW(o);
                 
@@ -125,6 +125,7 @@ Shader "Unlit/tree"
 					//return rim;
 				}
 
+
 				//Phong
 				fixed4 phong = ambient + col + toon;
 				
@@ -132,7 +133,7 @@ Shader "Unlit/tree"
 				float shadow = SHADOW_ATTENUATION(i);
 				phong.rgb *= shadow;
 
-				float fog = smoothstep(1,0,distance);
+				float fog = smoothstep(1,0,i.distance);
 
 				phong.r += fog;
 				phong.g += fog;
