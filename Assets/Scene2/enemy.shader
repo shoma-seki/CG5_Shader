@@ -3,6 +3,7 @@ Shader "Unlit/enemy"
 	Properties
 	{
 		_Color("Color",Color) = (1,0,0,1)
+		_RimColor("RimColor",Color)  = (0,0,0,1)
 		_MainTex ("Texture", 2D) = "white" {}
 	}
 
@@ -17,6 +18,7 @@ Shader "Unlit/enemy"
             #include "Lighting.cginc"
 
             fixed4  _Color;
+			fixed4 _RimColor;
 
             struct appdata
             {
@@ -106,7 +108,7 @@ Shader "Unlit/enemy"
 				{
 					sIntensity = 0;
 				}
-                fixed4 rim = pow(sIntensity, 100) * fixed4(0,0,0,1);
+                fixed4 rim = pow(sIntensity, 100) * _RimColor;
                 
 				if(sIntensity >= 0.9)
 				{
