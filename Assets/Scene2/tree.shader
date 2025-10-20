@@ -125,7 +125,6 @@ Shader "Unlit/tree"
 					//return rim;
 				}
 
-
 				//Phong
 				fixed4 phong = ambient + col + toon;
 				
@@ -133,12 +132,14 @@ Shader "Unlit/tree"
 				float shadow = SHADOW_ATTENUATION(i);
 				phong.rgb *= shadow;
 
-				float fog = smoothstep(1,0,i.distance);
+				fixed4 fogColor = fixed4(0.6, 0.7, 1.0 ,1); 
+				float fog = smoothstep(5,130,i.distance);
 
-				phong.r += fog;
-				phong.g += fog;
+				phong.rgb += fog;
 
-				return phong;
+				fixed4 newColor = lerp(phong, fogColor, fog);
+
+				return newColor;
 			}
 			ENDCG
 		}
