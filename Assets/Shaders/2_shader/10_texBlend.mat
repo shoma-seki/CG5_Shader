@@ -7,8 +7,8 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: 09_mask
-  m_Shader: {fileID: 4800000, guid: 3c6f7d3cc1ff41f4cadabac14c29b219, type: 3}
+  m_Name: 10_texBlend
+  m_Shader: {fileID: 4800000, guid: a3de9c9337d428d4eafcbc2f405cb356, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords: []
@@ -28,7 +28,11 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MaskTex:
-        m_Texture: {fileID: 2800000, guid: 0a94cd0be3ab96343a7a71885dd1a88d, type: 3}
+        m_Texture: {fileID: 2800000, guid: d522ec675e3246d4e97596a347a316ba, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _SubTex:
+        m_Texture: {fileID: 2800000, guid: 1493c291042d8e8499e05983fa3861ae, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Ints: []
