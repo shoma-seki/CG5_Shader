@@ -61,6 +61,13 @@ Shader "Unlit/06_Transparent_texture"
 				float2 offset = _MainTex_ST.zw;
 
 				fixed4 col = tex2D(_MainTex, i.uv * tiling + offset);
+
+				clip(col.a - 0.5);
+				
+				if(col.r <= 0.05 && col.g <= 0.05 && col.b <= 0.05)
+				{
+					discard;
+				}
 				                
 				return col;
 			}
