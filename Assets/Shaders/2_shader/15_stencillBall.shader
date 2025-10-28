@@ -11,8 +11,8 @@ Shader "Unlit/15_stencilBall"
 		{
 			stencil
 			{
-				ref 2
-				comp equal
+				Ref 2
+				Comp Equal
 			}
 			ztest always
 
