@@ -59,7 +59,7 @@ Shader "Unlit/02_Lambert"
                 
 				//Phong
 				fixed4 phong = ambient + diffuse + specular;
-
+				phong = intensity;
 				return phong;
 			}
 			ENDCG
