@@ -23,12 +23,23 @@ Material:
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:
+    - _HeightTex:
+        m_Texture: {fileID: 2800000, guid: 358d6517275554b47bcb5a95dab20075, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _MainTex:
         m_Texture: {fileID: 2800000, guid: bd044c06bb99e004aabd38b29ef1264c, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _SubTex:
+        m_Texture: {fileID: 2800000, guid: e711772d7ea852e4e93b8aab77773c12, type: 3}
+        m_Scale: {x: 4, y: 4}
+        m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
+    - _ParallaxDeep: 0.05
+    - _ParallaxShallow: 0
     - _Prallax: 0.5
+    - _SubPrallax: 0
     m_Colors: []
   m_BuildTextureStacks: []
