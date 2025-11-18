@@ -3,9 +3,9 @@ Shader "Unlit/18_Parallax"
 	Properties
 	{
 		_MainTex ("Texture", 2D) = "white" {}
-		_SubTex ("SubTexture", 2D) = "black" {}
-		_Prallax("Parallax", float) = 0.5
-		_SubPrallax("SubParallax", float) = 0
+		_HeightTex ("HeightTexture", 2D) = "black" {}
+		_ParallaxShallow("ParallaxShallow", float) = 0
+		_ParallaxDeep("DeepParallax", float) = 0.05
 	}
 	SubShader
 	{
@@ -17,8 +17,8 @@ Shader "Unlit/18_Parallax"
 			#include "UnityCG.cginc"
             #include "Lighting.cginc"
 
-			float _Prallax;
-			float _SubPrallax;
+			float _ParallaxShallow;
+			float _ParallaxDeep;
 
 			struct appdata
             {
@@ -37,8 +37,8 @@ Shader "Unlit/18_Parallax"
 			
             sampler2D _MainTex;
 			float4 _MainTex_ST;
-            sampler2D _SubTex;
-			float4 _SubTex_ST;
+			sampler2D _HeightTex;
+			float4 _HeightTex_ST;
 			
 			v2f vert(appdata v)
 			{
@@ -66,20 +66,18 @@ Shader "Unlit/18_Parallax"
 			{
 				//tiling
 				float2 tiling = _MainTex_ST.xy;
-				float2 subTiling = _SubTex_ST.xy;
-
-				float3 viewDirTS = normalize(-i.viewDirTS);
-
-				float2 mainOffset = viewDirTS.xy * _Prallax;
-				float2 subOffset = viewDirTS.xy * _SubPrallax;
-
-				float2 mainUV = i.uv * tiling + _MainTex_ST.zw + mainOffset;
-				float2 subUV = i.uv * subTiling + _MainTex_ST.zw + subOffset;
-
-				fixed4 mainColor = tex2D(_MainTex, mainUV);
-				fixed4 subColor = tex2D(_SubTex, subUV);
 				
-				return lerp(mainColor, subColor, subColor.a);
+				float3 viewDirTS = normalize(-i.viewDirTS);
+				float2 mainUV = i.uv * _MainTex_ST.xy + _MainTex_ST.zw;
+				float2 heightUV = i.uv * _HeightTex_ST.xy + _HeightTex_ST.zw;
+
+				float height = tex2D(_HeightTex, heightUV).r;
+
+				float2 shallowOffset = viewDirTS.xy * _ParallaxShallow;
+				float2 deepOffset = viewDirTS.xy * _ParallaxDeep;
+
+				float2 uv = mainUV + lerp(shallowOffset, deepOffset, height);
+				return tex2D(_MainTex, uv);
 			}
 			ENDCG
 		}
