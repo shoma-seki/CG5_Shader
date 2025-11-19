@@ -7,8 +7,8 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: 18_Parallax
-  m_Shader: {fileID: 4800000, guid: 24a711af083d96f4faa5fee0e42d056d, type: 3}
+  m_Name: 19_ParallaxEx
+  m_Shader: {fileID: 4800000, guid: a3380f9acc5e7e74796ee35f59f2ad91, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords: []
@@ -31,15 +31,10 @@ Material:
         m_Texture: {fileID: 2800000, guid: bd044c06bb99e004aabd38b29ef1264c, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
-    - _SubTex:
-        m_Texture: {fileID: 2800000, guid: e711772d7ea852e4e93b8aab77773c12, type: 3}
-        m_Scale: {x: 4, y: 4}
-        m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
-    - _ParallaxDeep: 0.02
-    - _ParallaxShallow: 0
-    - _Prallax: 0.5
-    - _SubPrallax: 0
+    - _HeightScale: 0.24
+    - _MaxLayers: 256
+    - _MinLayers: 64
     m_Colors: []
   m_BuildTextureStacks: []
