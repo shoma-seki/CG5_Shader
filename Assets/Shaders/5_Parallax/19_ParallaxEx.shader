@@ -8,35 +8,35 @@ Shader "Unlit/19_ParallaxEx"
 		_MinLayers ("MinLayers", Range(4, 64)) = 8
 		_MaxLayers ("MaxLayers", Range(16, 256)) = 32
 	}
-	SubShader
+	SubShader	
 	{
-		Pass
-		{
+	Pass
+	{
 			CGPROGRAM
 			#pragma vertex vert
 			#pragma fragment frag
 			#include "UnityCG.cginc"
-            #include "Lighting.cginc"
+			#include "Lighting.cginc"
 
 			float _ParallaxShallow;
 			float _ParallaxDeep;
 
 			struct appdata
-            {
-                float4 vertex : POSITION;
-                float3 normal : NORMAL;
+			{
+				float4 vertex : POSITION;
+				float3 normal : NORMAL;
 				float4 tangent : TANGENT;
-                float2 uv : TEXCOORD0;
-            };
+				float2 uv : TEXCOORD0;
+			};
 
-            struct v2f
-            {
-                float4 vertex : SV_POSITION;
-                float2 uv : TEXCOORD0;  
+			struct v2f
+			{
+				float4 vertex : SV_POSITION;
+				float2 uv : TEXCOORD0;  
 				float3 viewDirTS : TEXCOORD1;
-            };
+			};
 			
-            sampler2D _MainTex;
+			sampler2D _MainTex;
 			float4 _MainTex_ST;
 			sampler2D _HeightTex;
 			float4 _HeightTex_ST;
@@ -49,7 +49,7 @@ Shader "Unlit/19_ParallaxEx"
 			{
 				v2f o;
 				o.vertex = UnityObjectToClipPos(v.vertex);
-                o.uv = v.uv;
+				o.uv = v.uv;
 
 				float3 worldPos = mul(unity_ObjectToWorld, v.vertex).xyz;
 				float3 viewDirWS = _WorldSpaceCameraPos.xyz - worldPos;

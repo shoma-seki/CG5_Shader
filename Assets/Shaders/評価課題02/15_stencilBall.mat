@@ -7,8 +7,8 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: 19_ParallaxNoise
-  m_Shader: {fileID: 4800000, guid: bbe3bfdaaa382ec46bcce9bc21d1a5fd, type: 3}
+  m_Name: 15_stencilBall
+  m_Shader: {fileID: 4800000, guid: 96fe3ee546f70ac408ec7381c22c6366, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords: []
@@ -22,16 +22,9 @@ Material:
   m_LockedProperties: 
   m_SavedProperties:
     serializedVersion: 3
-    m_TexEnvs:
-    - _MainTex:
-        m_Texture: {fileID: 2800000, guid: 4340994ffe8b53a4fbec9d29a5e0ba66, type: 3}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
+    m_TexEnvs: []
     m_Ints: []
-    m_Floats:
-    - _Density: 0.02
-    - _HeightScale: 0.28
-    - _MaxLayers: 256
-    - _MinLayers: 64
-    m_Colors: []
+    m_Floats: []
+    m_Colors:
+    - _Color: {r: 1, g: 0, b: 0, a: 1}
   m_BuildTextureStacks: []

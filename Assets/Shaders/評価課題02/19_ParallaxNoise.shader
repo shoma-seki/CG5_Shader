@@ -4,17 +4,27 @@ Shader "Unlit/19_ParallaxNoise"
 	{
 		_MainTex ("Texture", 2D) = "white" {}
 		_HeightScale ("HeightScale", Range(0, 5)) = 0.1
+		_HeightPlus ("HeightPlus", float) = 0.1
 		_MinLayers ("MinLayers", Range(4, 64)) = 8
 		_MaxLayers ("MaxLayers", Range(16, 256)) = 32
 		_Density ("Density", float) = 10
 	}
 	SubShader
 	{
+		Tags { "Queue" = "Transparent" }
 		Pass
 		{
+			Stencil
+			{
+				Ref 3
+				Comp Always
+				Pass Replace
+
+			}
 			CGPROGRAM
 			#pragma vertex vert
 			#pragma fragment frag
+
 			#include "Noise.cginc"
 			#include "UnityCG.cginc"
             #include "Lighting.cginc"
@@ -41,6 +51,7 @@ Shader "Unlit/19_ParallaxNoise"
 			float4 _MainTex_ST;
 			
 			float _HeightScale;
+			float _HeightPlus;
 			float _MinLayers;
 			float _MaxLayers;
 
@@ -99,13 +110,18 @@ Shader "Unlit/19_ParallaxNoise"
 				float preLayerDepth = curLayerDepth - layerDepth;
 				float preHeight = FractalSumNoise(density, curTexCoord);
 
+				// preHeight += _HeightPlus;
+				// preLayerDepth += _HeightPlus;
+				// curHeight += _HeightPlus;
+				// curLayerDepth += _HeightPlus;
+
 				float heightDiff = preHeight - preLayerDepth;
 				float curDiff = curHeight - curLayerDepth;
 				float weight = heightDiff / (heightDiff - curDiff + 1e-5);
 
 				float2 finalTexCoord =
 					lerp(curTexCoord, preTexCoord, saturate(weight));
-				return finalTexCoord;
+				return finalTexCoord - deltaTexCoord * _HeightPlus;
 			}
 
 			fixed4 frag(v2f i) : SV_TARGET
