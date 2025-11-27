@@ -7,8 +7,8 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: 20_GrabPass
-  m_Shader: {fileID: 4800000, guid: a0aeabb99731d1f4bb74dd4091177214, type: 3}
+  m_Name: 21_GrabPassWater
+  m_Shader: {fileID: 4800000, guid: b198b7e5e08d20c44b9836ae7c445acd, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords: []
@@ -25,12 +25,11 @@ Material:
     m_TexEnvs: []
     m_Ints: []
     m_Floats:
-    - _HeightPlus: 97.97
-    - _HeightScale: 0
-    - _Push: 2
-    - _Shift: 0.142
-    - _ShiftX: -0.2
-    - _ShiftY: 0.28
+    - _HeightPlus: 0.1
+    - _HeightScale: 0.1
+    - _Push: 0.67
+    - _ShiftX: 0
+    - _ShiftY: 0
     m_Colors:
     - _Color: {r: 1, g: 0, b: 0, a: 1}
     - _ModelScreenCenter: {r: 0.5, g: 0.5, b: 0, a: 0}

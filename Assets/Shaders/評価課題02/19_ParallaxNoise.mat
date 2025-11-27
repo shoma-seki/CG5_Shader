@@ -30,7 +30,7 @@ Material:
     m_Ints: []
     m_Floats:
     - _Density: 0.02
-    - _HeightPlus: 221.6
+    - _HeightPlus: 75.34
     - _HeightScale: 0.44
     - _MaxLayers: 256
     - _MinLayers: 64

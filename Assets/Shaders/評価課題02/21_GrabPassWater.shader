@@ -1,4 +1,4 @@
-Shader "Unlit/20_GrabPass"
+Shader "Unlit/21_GrabPassWater"
 {
 	Properties
 	{
@@ -24,14 +24,12 @@ Shader "Unlit/20_GrabPass"
 			#pragma fragment frag
 			#include "UnityCG.cginc"
             #include "Lighting.cginc"
-			#include "Parallax.cginc"
+			#include "Noise.cginc"
 
             fixed4 _Color;
             float _ShiftX;
             float _ShiftY;
 			float _Push;
-
-			float2 _ModelScreenCenter;
 
 			struct appdata
             {
@@ -46,9 +44,7 @@ Shader "Unlit/20_GrabPass"
                 float4 vertex : SV_POSITION;
                 float3 worldPosition : TEXCOORD1;
                 float3 normal : NORMAL;
-                float4 uv : TEXCOORD0;  
-				float3 viewDirTS : TEXCOORD2;
-				float4 screenPos : TEXCOORD3;
+                float4 uv : TEXCOORD0;
             };
 			
             sampler2D _GrabPassTexture;
@@ -64,23 +60,19 @@ Shader "Unlit/20_GrabPass"
                 o.normal = UnityObjectToWorldNormal(v.normal);
                 o.uv = ComputeGrabScreenPos(o.vertex);
 
-				o.screenPos = ComputeScreenPos(o.vertex);
-
 				return o;
 			}
 
 			fixed4 frag(v2f i) : SV_TARGET
 			{
-				float4 screenUV = i.screenPos;
-				float4 MSC = float4(0,0,0,0);
-				MSC.xy = _ModelScreenCenter;
+				float4 uv = i.uv;
 
-				float4 uv = screenUV - MSC;
-
-				float2 centered = uv - 0.5;
-				float dir = normalize(centered);
-				float dist = length(centered);
-				uv = uv + dir * _Push;
+				//float density = (sin(_Time.y) * 5 - 2) * FractalSumNoise(5, uv);
+				
+				uv.x += FractalSumNoise(-_Push, uv);
+				uv.y += FractalSumNoise(-_Push, uv);
+				uv.x -= FractalSumNoise(_Push, uv);
+				uv.y -= FractalSumNoise(_Push, uv);
 
 				return tex2Dproj(_GrabPassTexture, uv);
 			}
