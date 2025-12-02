@@ -1,28 +1,22 @@
-Shader "Unlit/06_Transparent_texture"
+Shader "Unlit/box"
 {
 	Properties
 	{
         _Color("Color", Color) = (1,0,0,1)
-		_MainTex ("Texture", 2D) = "white" {}
+		_MainTex ("Texture1", 2D) = "white" {}
+		_SubTex ("Texture2", 2D) = "white" {}
+		_Dissolve("Dissolve", Range(0, 1)) = 0
 	}
 	SubShader
 	{
-		Pass
-		{
-			Tags
-			{
-				"Queue" = "Transparent"
-			}
-
-			Blend SrcAlpha OneMinusSrcAlpha
-
-			CGPROGRAM
+		CGINCLUDE
 			#pragma vertex vert
 			#pragma fragment frag
 			#include "UnityCG.cginc"
             #include "Lighting.cginc"
 
             fixed4 _Color;
+			float _Dissolve;
 
 			struct appdata
             {
@@ -39,9 +33,6 @@ Shader "Unlit/06_Transparent_texture"
                 float2 uv : TEXCOORD0;  
             };
 			
-            sampler2D _MainTex;
-			float4 _MainTex_ST;
-			
 			v2f vert(appdata v)
 			{
 				v2f o;
@@ -51,6 +42,23 @@ Shader "Unlit/06_Transparent_texture"
                 o.uv = v.uv;
 				return o;
 			}
+		ENDCG
+
+		Pass
+		{
+			Cull Front
+
+			Tags
+			{
+				"Queue" = "Transparent"
+			}
+
+			Blend SrcAlpha OneMinusSrcAlpha
+
+			CGPROGRAM
+			
+            sampler2D _MainTex;
+			float4 _MainTex_ST;
 
 			fixed4 frag(v2f i) : SV_TARGET
 			{
@@ -61,13 +69,44 @@ Shader "Unlit/06_Transparent_texture"
 				float2 offset = _MainTex_ST.zw;
 
 				fixed4 col = tex2D(_MainTex, i.uv * tiling + offset);
-
-				//clip(col.a - 0.1);
 				
-				// if(col.r <= 0.05 && col.g <= 0.05 && col.b <= 0.05)
-				// {
-				// 	discard;
-				// }
+				float buffer = col.b;
+				col.b = col.r;
+				col.r = buffer;
+				col.r += 0.1;
+
+				clip(col.b - _Dissolve);
+				                
+				return col;
+			}
+			ENDCG
+		}
+
+		Pass
+		{
+			Tags
+			{
+				"Queue" = "Transparent"
+			}
+
+			Blend SrcAlpha OneMinusSrcAlpha
+
+			CGPROGRAM
+			
+            sampler2D _SubTex;
+			float4 _SubTex_ST;
+			
+			fixed4 frag(v2f i) : SV_TARGET
+			{
+				//tiling
+				float2 tiling = _SubTex_ST.xy;
+
+				//offset
+				float2 offset = _SubTex_ST.zw;
+
+				fixed4 col = tex2D(_SubTex, i.uv * tiling + offset);
+
+				clip(col.r - _Dissolve);
 				                
 				return col;
 			}

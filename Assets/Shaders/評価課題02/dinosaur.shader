@@ -1,21 +1,23 @@
-Shader "Unlit/15_stencilBall"
+Shader "Unlit/dinosaur"
 {
 	Properties
 	{
 		_MainTex ("Texture", 2D) = "white" {}
-		_Color("Color",Color) = (1,0,0,1)
+        _Color("Color", Color) = (1,0,0,1)
+		_MaskTex ("maskTex", 2D) = "white" {}
 	}
 	SubShader
 	{
-			Tags{ "Queue" = "Transparent+1" }
+		//Cull Off
+
 		Pass
 		{
-			stencil
+			Tags
 			{
-				Ref 3
-				Comp Equal
+				"Queue" = "Transparent"
 			}
-			Ztest Always
+
+			Blend SrcAlpha OneMinusSrcAlpha
 
 			CGPROGRAM
 			#pragma vertex vert
@@ -23,15 +25,12 @@ Shader "Unlit/15_stencilBall"
 			#include "UnityCG.cginc"
             #include "Lighting.cginc"
 
-			fixed4 _Color;
-			
-			sampler2D _MainTex;
-			float4 _MainTex_ST;
+            fixed4 _Color;
 
 			struct appdata
             {
                 float4 vertex : POSITION;
-				float3 normal : NORMAL;
+                float3 normal : NORMAL;
                 float2 uv: TEXCOORD0;
             };
 
@@ -39,19 +38,22 @@ Shader "Unlit/15_stencilBall"
             {
                 float4 vertex : SV_POSITION;
                 float3 worldPosition : TEXCOORD1;
-				float3 normal : NORMAL;
+                float3 normal : NORMAL;
                 float2 uv : TEXCOORD0;  
             };
-
+			
+            sampler2D _MaskTex;
+			float4 _MaskTex_ST;
+			sampler2D _MainTex;
+			float4 _MainTex_ST;
+			
 			v2f vert(appdata v)
 			{
 				v2f o;
 				o.vertex = UnityObjectToClipPos(v.vertex);
                 o.worldPosition = mul(unity_ObjectToWorld, v.vertex);
-
-				o.normal = UnityObjectToWorldNormal(v.normal);
+                o.normal = UnityObjectToWorldNormal(v.normal);
                 o.uv = v.uv;
-
 				return o;
 			}
 
@@ -59,26 +61,18 @@ Shader "Unlit/15_stencilBall"
 			{
 				fixed4 col = tex2D(_MainTex, i.uv);
 
-				//アンビエント
-				fixed4 ambient = _Color * 0.3;
+				fixed4 mask = tex2D(_MaskTex, i.uv * _MaskTex_ST.xy);
 
-				//ディフューズ
-				float intensity=
-                    saturate(dot(normalize(i.normal),_WorldSpaceLightPos0));
-				fixed4 color = _Color;
-                fixed4 diffuse = color * intensity * _LightColor0;
-
-				//スペキュラ
+				//�X�y�L����
                 float3 eyeDir = normalize(_WorldSpaceCameraPos.xyz - i.worldPosition);
                 float3 lightDir = normalize(_WorldSpaceLightPos0);
                 i.normal = normalize(i.normal);
                 float3 reflectDir = -lightDir + 2 * i.normal * dot(i.normal, lightDir);
-                fixed4 specular = pow(saturate(dot(reflectDir, eyeDir)), 20) * _LightColor0;
-                
-				//Phong
-				fixed4 phong = ambient + diffuse + specular + col;
+                fixed4 specular = pow(saturate(dot(reflectDir, eyeDir)), 5) * _LightColor0;
 
-				return phong;
+				col = lerp(col, col + specular, mask.r);
+
+				return col + mask.r * specular;
 			}
 			ENDCG
 		}
