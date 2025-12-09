@@ -1,9 +1,10 @@
-Shader "PostEffect/PE_ToneCorrection"
+Shader "PostEffect/PE_Noise"
 {
     Properties
     {
         saturation("彩度", range(0,1)) = 1
         contrast("コントラスト", range(0,2)) = 1
+        push("ずらし具合", float) = 1
     }
 
     SubShader
@@ -28,10 +29,21 @@ Shader "PostEffect/PE_ToneCorrection"
 
             half saturation;
             half contrast;
+            half push;
 
             half4 Frag(Varyings input) : SV_Target
             {
-                half4 output = SAMPLE_TEXTURE2D(_BlitTexture, sampler_LinearRepeat, input.texcoord);
+                float2 uv = input.texcoord;
+
+                uv.x += FractalSumNoise(-push, uv);
+				uv.y += FractalSumNoise(-push, uv);
+				uv.x -= FractalSumNoise(push, uv);
+				uv.y -= FractalSumNoise(push, uv);
+
+                uv.x = saturate(uv.x);
+                uv.y = saturate(uv.y);
+
+                half4 output = SAMPLE_TEXTURE2D(_BlitTexture, sampler_LinearRepeat, uv);
 
                 half grayscale =
                 0.2126 * output.r + 0.7152 * output.g + 0.0722 * output.b;
