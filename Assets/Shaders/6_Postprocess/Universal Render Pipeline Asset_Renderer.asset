@@ -98,4 +98,5 @@ MonoBehaviour:
   m_Name: ClippingCheckRenderFeature
   m_EditorClassIdentifier: Assembly-CSharp::PostEffectRenderFeature
   m_Active: 0
-  postEffectMaterial: {fileID: 0}
+  blurMaterial_: {fileID: 2100000, guid: 07f89b432c3ccb04bbd8e80da914c19f, type: 2}
+  passThroughMaterial_: {fileID: 2100000, guid: 763b53855dc876d40bf215f521365ff2, type: 2}
