@@ -6,12 +6,13 @@ using UnityEngine.Rendering.RenderGraphModule;
 
 public class PostEffectRenderFeature : ScriptableRendererFeature
 {
-    [SerializeField] private Material postEffectMaterial;
+    [SerializeField] private Material blurMaterial_;
+    [SerializeField] private Material passThroughMaterial_;
     private PostEffectRenderPass renderPass;
 
     public override void Create()
     {
-        renderPass = new PostEffectRenderPass(postEffectMaterial);
+        renderPass = new PostEffectRenderPass(blurMaterial_, passThroughMaterial_);
         renderPass.renderPassEvent = RenderPassEvent.BeforeRenderingPostProcessing;
     }
 

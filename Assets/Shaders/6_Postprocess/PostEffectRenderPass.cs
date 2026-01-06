@@ -6,16 +6,18 @@ using UnityEngine.Rendering.Universal;
 
 public class PostEffectRenderPass : ScriptableRenderPass
 {
-    private Material material = null;
+    private Material blurMaterial_ = null;
+    private Material passThroughMaterial_ = null;
 
-    public PostEffectRenderPass(Material postEffectMaterial)
+    public PostEffectRenderPass(Material blurMaterial, Material passThroughMaterial)
     {
-        material = postEffectMaterial;
+        blurMaterial_ = blurMaterial;
+        passThroughMaterial_ = passThroughMaterial;
     }
 
     public override void RecordRenderGraph(RenderGraph renderGraph, ContextContainer frameData)
     {
-        if (material == null)
+        if (blurMaterial_ == null || passThroughMaterial_ == null)
         {
             base.RecordRenderGraph(renderGraph, frameData);
             return;
@@ -26,14 +28,25 @@ public class PostEffectRenderPass : ScriptableRenderPass
 
         TextureHandle cameraTexture = resourceData.activeColorTexture;
         TextureDesc tempDesc = renderGraph.GetTextureDesc(cameraTexture);
-        tempDesc.name = "_GreenTexture";
+        tempDesc.name = "_OrigTempTexture";
         tempDesc.depthBufferBits = 0;
 
-        TextureHandle tempTexture = renderGraph.CreateTexture(tempDesc);
+        TextureHandle origTempTexture = renderGraph.CreateTexture(tempDesc);
 
-        RenderGraphUtils.BlitMaterialParameters blitMaterialParameters =
-            new RenderGraphUtils.BlitMaterialParameters(cameraTexture, tempTexture, material, 0);
-        renderGraph.AddBlitPass(blitMaterialParameters, "BlitGreenPostEffect");
-        renderGraph.AddCopyPass(tempTexture, cameraTexture, "CopyGreenPostEffect");
+        tempDesc.name = "_SmallTempTexture";
+        int div = 2;
+        tempDesc.width /= div;
+        tempDesc.height /= div;
+        TextureHandle smallTempTexture = renderGraph.CreateTexture(tempDesc);
+
+        RenderGraphUtils.BlitMaterialParameters downSampleBlitMaterialParameters =
+            new RenderGraphUtils.BlitMaterialParameters(cameraTexture, smallTempTexture, blurMaterial_, 0);
+        renderGraph.AddBlitPass(downSampleBlitMaterialParameters, "DownSamplingBlitBlur");
+
+        RenderGraphUtils.BlitMaterialParameters upSampleBlitMaterialParameters =
+            new RenderGraphUtils.BlitMaterialParameters(cameraTexture, origTempTexture, passThroughMaterial_, 0);
+        renderGraph.AddBlitPass(upSampleBlitMaterialParameters, "UpSamplingBlitBlur");
+
+        renderGraph.AddCopyPass(origTempTexture, cameraTexture, "CopyGreenPostEffect");
     }
 }
