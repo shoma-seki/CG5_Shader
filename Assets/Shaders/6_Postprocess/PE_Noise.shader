@@ -40,8 +40,7 @@ Shader "PostEffect/PE_Noise"
 				uv.x -= FractalSumNoise(push, uv);
 				uv.y -= FractalSumNoise(push, uv);
 
-                uv.x = saturate(uv.x);
-                uv.y = saturate(uv.y);
+                uv = clamp(uv, 0.001, 0.999);
 
                 half4 output = SAMPLE_TEXTURE2D(_BlitTexture, sampler_LinearRepeat, uv);
 
