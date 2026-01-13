@@ -49,6 +49,7 @@ public class BloomRenderPass : ScriptableRenderPass
 
         TextureHandle origTempTexture = renderGraph.CreateTexture(originalTextureDesc);
 
+        ///テクスチャを作る↓↓↓↓↓
         TextureDesc luminanceTextureDesc = originalTextureDesc;
         luminanceTextureDesc.name = "_SmallTempTexture";
 
@@ -57,6 +58,7 @@ public class BloomRenderPass : ScriptableRenderPass
         luminanceTextureDesc.height /= div;
 
         luminanceTextureDesc.format = UnityEngine.Experimental.Rendering.GraphicsFormat.R8G8B8A8_UNorm;
+        ///テクスチャを作る↑↑↑↑↑
 
         TextureHandle luminanceTexture = renderGraph.CreateTexture(luminanceTextureDesc);
         TextureHandle luminanceBlurTexture = renderGraph.CreateTexture(luminanceTextureDesc);
@@ -69,10 +71,36 @@ public class BloomRenderPass : ScriptableRenderPass
             new RenderGraphUtils.BlitMaterialParameters(luminanceTexture, luminanceBlurTexture, blurMaterial_, 0);
         renderGraph.AddBlitPass(brightnessBlitMaterialParameters, "BrightnessBlit");
 
+        ///川瀬ブラー1↓↓↓↓↓
+        TextureDesc kawaseTextureDesc1 = renderGraph.GetTextureDesc(luminanceBlurTexture);
+
+        kawaseTextureDesc1.width /= div;
+        kawaseTextureDesc1.height /= div;
+        kawaseTextureDesc1.format = UnityEngine.Experimental.Rendering.GraphicsFormat.R8G8B8A8_UNorm;
+        TextureHandle kawaseTexture1 = renderGraph.CreateTexture(kawaseTextureDesc1);
+
+        RenderGraphUtils.BlitMaterialParameters kawaseBlitMaterialParameters =
+            new RenderGraphUtils.BlitMaterialParameters(luminanceBlurTexture, kawaseTexture1, blurMaterial_, 0);
+        renderGraph.AddBlitPass(kawaseBlitMaterialParameters, "KawaseBlur1");
+        ///川瀬ブラー1↑↑↑↑↑
+
+        ///川瀬ブラー2↓↓↓↓↓
+        TextureDesc kawaseTextureDesc2 = renderGraph.GetTextureDesc(kawaseTexture1);
+
+        kawaseTextureDesc2.width /= div;
+        kawaseTextureDesc2.height /= div;
+        kawaseTextureDesc2.format = UnityEngine.Experimental.Rendering.GraphicsFormat.R8G8B8A8_UNorm;
+        TextureHandle kawaseTexture2 = renderGraph.CreateTexture(kawaseTextureDesc1);
+
+        RenderGraphUtils.BlitMaterialParameters kawaseBlitMaterialParameters2 =
+            new RenderGraphUtils.BlitMaterialParameters(luminanceBlurTexture, kawaseTexture2, blurMaterial_, 0);
+        renderGraph.AddBlitPass(kawaseBlitMaterialParameters2, "KawaseBlur2");
+        ///川瀬ブラー2↑↑↑↑↑
+
         using (IRasterRenderGraphBuilder builder = renderGraph.AddRasterRenderPass("BloomComposite", out CompositePassData passData))
         {
             passData.sourceTexture = cameraTexture;
-            passData.otherTexture = luminanceBlurTexture;
+            passData.otherTexture = kawaseTexture2;
             passData.destination = origTempTexture;
             passData.material = compositeTextureMaterial_;
 
