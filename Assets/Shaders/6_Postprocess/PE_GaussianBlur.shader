@@ -43,13 +43,15 @@ Shader "PostEffect/PE_GaussianBlur"
                 float totalWeight = 0;
                 float kernelWidth = 3 * _Sigma;
 
+                float2 margin = _BlitTexture_TexelSize.xy/2;
+
                 for(float y = -kernelWidth/2;  y <= kernelWidth/2; y += _StepWidth)
                     {
                         for(float x = -kernelWidth/2;  x <= kernelWidth/2; x += _StepWidth)
                         {
                             float2 drawUV = IN.texcoord;
                             float2 pickUV = IN.texcoord + float2(x,y);
-                            pickUV = clamp(pickUV, 0.001, 0.999);
+                            pickUV = clamp(pickUV, margin, 1 - margin);
                             float d = distance(drawUV, pickUV);
                             float weight = Gaussian(d, _Sigma);
 
