@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5367967b7885544fbee5330dea81762, type: 3}
   m_Name: ToneMappingRenderFeature
   m_EditorClassIdentifier: Assembly-CSharp::ToneMappingRenderFeature
-  m_Active: 1
+  m_Active: 0
   postEffectMaterial: {fileID: 2100000, guid: 07f89b432c3ccb04bbd8e80da914c19f, type: 2}
 --- !u!114 &11400000
 MonoBehaviour:
@@ -41,7 +41,8 @@ MonoBehaviour:
   m_RendererFeatures:
   - {fileID: 4675373149662260299}
   - {fileID: -1413988338801691376}
-  m_RendererFeatureMap: 4bac04c21b43e24010352ef5188160ec
+  - {fileID: 7717957597913765616}
+  m_RendererFeatureMap: 4bac04c21b43e24010352ef5188160ecf0562d378bb11b6b
   m_UseNativeRenderPass: 0
   xrSystemData: {fileID: 0}
   postProcessData: {fileID: 0}
@@ -85,3 +86,19 @@ MonoBehaviour:
   m_Active: 0
   blurMaterial_: {fileID: 2100000, guid: 07f89b432c3ccb04bbd8e80da914c19f, type: 2}
   passThroughMaterial_: {fileID: 2100000, guid: 763b53855dc876d40bf215f521365ff2, type: 2}
+--- !u!114 &7717957597913765616
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 239b03a4dce52c44aa4febaf8322c58d, type: 3}
+  m_Name: BloomRenderFeature
+  m_EditorClassIdentifier: Assembly-CSharp::BloomRenderFeature
+  m_Active: 1
+  bloomMaterial_: {fileID: 2100000, guid: 07f89b432c3ccb04bbd8e80da914c19f, type: 2}
+  luminanceExtractMaterial_: {fileID: 2100000, guid: 1a621bd6a9960de478b61356534ac900, type: 2}
+  textureCompositeMaterial_: {fileID: 2100000, guid: d24c586f94394e24595346402a8f02be, type: 2}
