@@ -48,12 +48,13 @@ public class BloomRenderPass : ScriptableRenderPass
         originalTextureDesc.depthBufferBits = 0;
 
         TextureHandle origTempTexture = renderGraph.CreateTexture(originalTextureDesc);
+        TextureHandle origTempTexture1 = renderGraph.CreateTexture(originalTextureDesc);
 
         ///テクスチャを作る↓↓↓↓↓
         TextureDesc luminanceTextureDesc = originalTextureDesc;
         luminanceTextureDesc.name = "_SmallTempTexture";
 
-        int div = 4;
+        int div = 2;
         luminanceTextureDesc.width /= div;
         luminanceTextureDesc.height /= div;
 
@@ -61,47 +62,48 @@ public class BloomRenderPass : ScriptableRenderPass
         ///テクスチャを作る↑↑↑↑↑
 
         TextureHandle luminanceTexture = renderGraph.CreateTexture(luminanceTextureDesc);
-        TextureHandle luminanceBlurTexture = renderGraph.CreateTexture(luminanceTextureDesc);
+        TextureHandle[] luminanceBlurTexture = new TextureHandle[3];
 
         RenderGraphUtils.BlitMaterialParameters luminanceExtractBlitMaterialParameters =
             new RenderGraphUtils.BlitMaterialParameters(cameraTexture, luminanceTexture, luminanceExtractMaterial_, 0);
         renderGraph.AddBlitPass(luminanceExtractBlitMaterialParameters, "LuminanceExtractBlit");
 
+        for (int i = 0; i < luminanceBlurTexture.Length; i++)
+        {
+            luminanceBlurTexture[i] = renderGraph.CreateTexture(luminanceTextureDesc);
+
+            luminanceTextureDesc.width /= div;
+            luminanceTextureDesc.height /= div;
+        }
+
         RenderGraphUtils.BlitMaterialParameters brightnessBlitMaterialParameters =
-            new RenderGraphUtils.BlitMaterialParameters(luminanceTexture, luminanceBlurTexture, blurMaterial_, 0);
+            new RenderGraphUtils.BlitMaterialParameters(luminanceTexture, luminanceBlurTexture[0], blurMaterial_, 0);
         renderGraph.AddBlitPass(brightnessBlitMaterialParameters, "BrightnessBlit");
 
-        ///川瀬ブラー1↓↓↓↓↓
-        TextureDesc kawaseTextureDesc1 = renderGraph.GetTextureDesc(luminanceBlurTexture);
+        brightnessBlitMaterialParameters =
+            new RenderGraphUtils.BlitMaterialParameters(luminanceBlurTexture[0], luminanceBlurTexture[1], blurMaterial_, 0);
+        renderGraph.AddBlitPass(brightnessBlitMaterialParameters, "BrightnessBlit");
 
-        kawaseTextureDesc1.width /= div;
-        kawaseTextureDesc1.height /= div;
-        kawaseTextureDesc1.format = UnityEngine.Experimental.Rendering.GraphicsFormat.R8G8B8A8_UNorm;
-        TextureHandle kawaseTexture1 = renderGraph.CreateTexture(kawaseTextureDesc1);
+        brightnessBlitMaterialParameters =
+            new RenderGraphUtils.BlitMaterialParameters(luminanceBlurTexture[1], luminanceBlurTexture[2], blurMaterial_, 0);
+        renderGraph.AddBlitPass(brightnessBlitMaterialParameters, "BrightnessBlit");
 
-        RenderGraphUtils.BlitMaterialParameters kawaseBlitMaterialParameters =
-            new RenderGraphUtils.BlitMaterialParameters(luminanceBlurTexture, kawaseTexture1, blurMaterial_, 0);
-        renderGraph.AddBlitPass(kawaseBlitMaterialParameters, "KawaseBlur1");
-        ///川瀬ブラー1↑↑↑↑↑
+        TextureHandle kawaseBlurTex = renderGraph.CreateTexture(originalTextureDesc);
 
-        ///川瀬ブラー2↓↓↓↓↓
-        TextureDesc kawaseTextureDesc2 = renderGraph.GetTextureDesc(kawaseTexture1);
+        Composite(renderGraph, cameraTexture, luminanceBlurTexture[0], kawaseBlurTex);
+        Composite(renderGraph, kawaseBlurTex, luminanceBlurTexture[1], origTempTexture1);
+        Composite(renderGraph, origTempTexture1, luminanceBlurTexture[2], kawaseBlurTex);
 
-        kawaseTextureDesc2.width /= div;
-        kawaseTextureDesc2.height /= div;
-        kawaseTextureDesc2.format = UnityEngine.Experimental.Rendering.GraphicsFormat.R8G8B8A8_UNorm;
-        TextureHandle kawaseTexture2 = renderGraph.CreateTexture(kawaseTextureDesc1);
+        renderGraph.AddCopyPass(kawaseBlurTex, cameraTexture, "CopyBloom");
+    }
 
-        RenderGraphUtils.BlitMaterialParameters kawaseBlitMaterialParameters2 =
-            new RenderGraphUtils.BlitMaterialParameters(luminanceBlurTexture, kawaseTexture2, blurMaterial_, 0);
-        renderGraph.AddBlitPass(kawaseBlitMaterialParameters2, "KawaseBlur2");
-        ///川瀬ブラー2↑↑↑↑↑
-
+    void Composite(RenderGraph renderGraph, TextureHandle sourceTexture, TextureHandle otherTexture, TextureHandle destinationTexture)
+    {
         using (IRasterRenderGraphBuilder builder = renderGraph.AddRasterRenderPass("BloomComposite", out CompositePassData passData))
         {
-            passData.sourceTexture = cameraTexture;
-            passData.otherTexture = kawaseTexture2;
-            passData.destination = origTempTexture;
+            passData.sourceTexture = sourceTexture;
+            passData.otherTexture = otherTexture;
+            passData.destination = destinationTexture;
             passData.material = compositeTextureMaterial_;
 
             builder.UseTexture(passData.sourceTexture);
@@ -115,7 +117,5 @@ public class BloomRenderPass : ScriptableRenderPass
                 Blitter.BlitTexture(ctx.cmd, data.sourceTexture, new Vector4(1, 1, 0, 0), data.material, 0);
             });
         }
-
-        renderGraph.AddCopyPass(origTempTexture, cameraTexture, "CopyBloom");
     }
 }
