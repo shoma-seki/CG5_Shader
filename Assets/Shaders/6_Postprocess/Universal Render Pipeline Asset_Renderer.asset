@@ -1,5 +1,35 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!114 &-8831132868505104226
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 34384bc285af49c498ced2c8910b90f4, type: 3}
+  m_Name: DOFRenderFeature
+  m_EditorClassIdentifier: Assembly-CSharp::DOFRenderFeature
+  m_Active: 0
+  material_: {fileID: 2100000, guid: b8cbd2167a5d2ea459936be34cfd2ca9, type: 2}
+--- !u!114 &-4129067385714112906
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e5f14b0e6c5b9da4ab355391430130c4, type: 3}
+  m_Name: DOFRenderFeature
+  m_EditorClassIdentifier: Assembly-CSharp::DOFRenderFeature
+  m_Active: 0
+  depthMaterial_: {fileID: 2100000, guid: b8cbd2167a5d2ea459936be34cfd2ca9, type: 2}
+  blurMaterial_: {fileID: 2100000, guid: 07f89b432c3ccb04bbd8e80da914c19f, type: 2}
+  dofMaterial_: {fileID: 2100000, guid: 3bc277506f36f514cb8673a8b7024002, type: 2}
 --- !u!114 &-1413988338801691376
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -42,7 +72,10 @@ MonoBehaviour:
   - {fileID: 4675373149662260299}
   - {fileID: -1413988338801691376}
   - {fileID: 2049536952313730110}
-  m_RendererFeatureMap: 4bac04c21b43e24010352ef5188160ec3e54b2ccff6a711c
+  - {fileID: -8831132868505104226}
+  - {fileID: -4129067385714112906}
+  - {fileID: 7063353379987724332}
+  m_RendererFeatureMap: 4bac04c21b43e24010352ef5188160ec3e54b2ccff6a711c9e107a08728371857606dce4169bb2c62c1839d179120662
   m_UseNativeRenderPass: 0
   xrSystemData: {fileID: 0}
   postProcessData: {fileID: 0}
@@ -83,7 +116,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 239b03a4dce52c44aa4febaf8322c58d, type: 3}
   m_Name: BloomRenderFeature
   m_EditorClassIdentifier: Assembly-CSharp::BloomRenderFeature
-  m_Active: 1
+  m_Active: 0
   bloomMaterial_: {fileID: 2100000, guid: 07f89b432c3ccb04bbd8e80da914c19f, type: 2}
   luminanceExtractMaterial_: {fileID: 2100000, guid: 1a621bd6a9960de478b61356534ac900, type: 2}
   textureCompositeMaterial_: {fileID: 2100000, guid: d24c586f94394e24595346402a8f02be, type: 2}
@@ -102,3 +135,21 @@ MonoBehaviour:
   m_Active: 0
   blurMaterial_: {fileID: 2100000, guid: 07f89b432c3ccb04bbd8e80da914c19f, type: 2}
   passThroughMaterial_: {fileID: 2100000, guid: 763b53855dc876d40bf215f521365ff2, type: 2}
+--- !u!114 &7063353379987724332
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: edda53988ffe47849b6b77d04b0862ab, type: 3}
+  m_Name: DOF_CocRenderFeature
+  m_EditorClassIdentifier: Assembly-CSharp::DOF_CocRenderFeature
+  m_Active: 1
+  depthMaterial_: {fileID: 2100000, guid: b8cbd2167a5d2ea459936be34cfd2ca9, type: 2}
+  lowBlurMaterial_: {fileID: 2100000, guid: 003b01eaf6be16c44ad0d543be6f6c95, type: 2}
+  middleBlurMaterial_: {fileID: 2100000, guid: 80bb9d3d497f4c040ba841c850f8f34d, type: 2}
+  highBlurMaterial_: {fileID: 2100000, guid: 06c8730badb72be41b6ca42d540b82b5, type: 2}
+  dofMaterial_: {fileID: 2100000, guid: e9a73e5a630ddbd41a07113e10526841, type: 2}
