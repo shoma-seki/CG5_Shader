@@ -1,4 +1,4 @@
-Shader "Custom/SoftParticle"
+Shader "Custom/IntersectionHighlight"
 {
     Properties
     {
@@ -16,7 +16,7 @@ Shader "Custom/SoftParticle"
 
         Pass
         {
-            Name "SoftParticle"
+            Name "IntersectionHighlight"
             Blend SrcAlpha OneMinusSrcAlpha
             ZWrite Off
 
@@ -79,7 +79,7 @@ Shader "Custom/SoftParticle"
                 float sceneEyeDepth = LinearEyeDepth(rawSceneDepth, _ZBufferParams);
 
                 float diff = sceneEyeDepth - IN.eyeDepth;
-                float soft = saturate(diff / max(_Softness, 0.001));
+                float soft = 1 - saturate(diff / max(_Softness, 0.001)) + 0.05;
 
                 half4 tex = SAMPLE_TEXTURE2D(_BaseMap, sampler_BaseMap, IN.uv);
 
