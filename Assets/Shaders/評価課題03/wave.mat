@@ -7,8 +7,8 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: PE_DOF_Coc
-  m_Shader: {fileID: 4800000, guid: 422df7b944fc4f049a2b38756766674d, type: 3}
+  m_Name: wave
+  m_Shader: {fileID: 4800000, guid: 2ef54772eef559d4dac0dc26ff30e5bd, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords: []
@@ -23,31 +23,14 @@ Material:
   m_SavedProperties:
     serializedVersion: 3
     m_TexEnvs:
-    - _DepthTexture:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _HighBlurTexture:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _LowBlurTexture:
-        m_Texture: {fileID: 0}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
-    - _MiddleBlurTexture:
-        m_Texture: {fileID: 0}
+    - _BaseMap:
+        m_Texture: {fileID: 10305, guid: 0000000000000000f000000000000000, type: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
-    - _BlurLevelWidth: 0.05
-    - _FNumber: 2.8
-    - _FocalLengthMilimeter: 35
-    - _FocusDistance: 11.13
-    - _HighBlurLevel: 0.3
-    - _LowBlurLevel: 0.05
-    - _MiddleBlurLevel: 0.1
+    - _Density: 1.23
+    - _Softness: 0.32
     m_Colors: []
   m_BuildTextureStacks: []
   m_AllowLocking: 1
