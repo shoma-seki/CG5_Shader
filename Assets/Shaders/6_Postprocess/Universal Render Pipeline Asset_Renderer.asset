@@ -27,7 +27,7 @@ MonoBehaviour:
   m_Name: ToneCorrectionRenderFeature
   m_EditorClassIdentifier: Assembly-CSharp::ToneMappingRenderFeature
   m_Active: 1
-  postEffectMaterial: {fileID: 0}
+  postEffectMaterial: {fileID: 2100000, guid: dc2bcd2233b5f0341889b0a5377144a0, type: 2}
 --- !u!114 &-4129067385714112906
 MonoBehaviour:
   m_ObjectHideFlags: 0
