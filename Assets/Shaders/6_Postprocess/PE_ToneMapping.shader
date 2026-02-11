@@ -1,11 +1,5 @@
 Shader "PostEffect/PE_ToneMapping"
 {
-    Properties
-    {
-        saturation("彩度", range(0,1)) = 1
-        contrast("コントラスト", range(0,2)) = 1
-    }
-
     SubShader
     {
         Tags { "RenderPipeline" = "UniversalPipeline" }
