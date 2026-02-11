@@ -1,24 +1,26 @@
-Shader "Unlit/05_RimLight"
+Shader "Unlit/tree"
 {
 	Properties
 	{
 		_Color("Color",Color) = (1,0,0,1)
-		_RimColor("RimColor",Color)  = (0,0,0,1)
 		_MainTex ("Texture", 2D) = "white" {}
 	}
 
 	SubShader
-	{
+	{		
+		Tags { "RenderType" = "Opaque" }
+
 		Pass
 		{
+			Tags{ "LightMode" = "ForwardBase" }
 			CGPROGRAM
 			#pragma vertex vert
 			#pragma fragment frag
 			#include "UnityCG.cginc"
             #include "Lighting.cginc"
+			#include "AutoLight.cginc"
 
             fixed4  _Color;
-			fixed4 _RimColor;
 
             struct appdata
             {
@@ -30,9 +32,11 @@ Shader "Unlit/05_RimLight"
             struct v2f
             {
                 float4 vertex : SV_POSITION;
-                float3 worldPosition : TEXCOORD1;
+				float distance : TEXCOORD1;
+                float3 worldPosition : TEXCOORD2;
 				float3 normal : NORMAL;
-                float2 uv : TEXCOORD0;  
+                float2 uv : TEXCOORD3;  
+				SHADOW_COORDS(2)
             };
 			
             sampler2D _MainTex;
@@ -43,10 +47,16 @@ Shader "Unlit/05_RimLight"
 				v2f o;
 				o.vertex = UnityObjectToClipPos(v.vertex);
                 o.worldPosition = mul(unity_ObjectToWorld, v.vertex);
+				float3 worldPos = mul(unity_ObjectToWorld, v.vertex).xyz;
 
 				o.normal = UnityObjectToWorldNormal(v.normal);
 
                 o.uv = v.uv;
+
+				//カメラとの距離
+				o.distance = distance(worldPos.xyz, _WorldSpaceCameraPos.xyz);
+
+				TRANSFER_SHADOW(o);
                 
 				return o;
 			}
@@ -63,18 +73,22 @@ Shader "Unlit/05_RimLight"
 				fixed4 col = tex2D(_MainTex, i.uv * tiling + offset);
 
 				//アンビエント
-				fixed4 ambient = _Color * -1.5 * _LightColor0;
+				fixed4 ambient = _Color * -400 * _LightColor0;
 
 				//ディフューズ
 				float iDot = dot(normalize(i.normal),_WorldSpaceLightPos0);
 				float intensity = saturate(iDot);
 				fixed4 color = _Color;
-                float toonColor = smoothstep(0.2, 0.3, intensity);
-                if(toonColor <= 0.2)
+                float toonColor = smoothstep(0.7, 0.8, intensity);
+                if(toonColor >= 0.1)
                 {
-                    toonColor = -3;
+                    toonColor = 0;
                 }
-				fixed4 toon = color * toonColor *  _LightColor0;
+                // if(toonColor <= 0.2)
+                // {
+                //     toonColor = 0.2;
+                // }
+				fixed4 toon = color * toonColor * _LightColor0;
 
 				//スペキュラ
 				float3 eyeDir = normalize(_WorldSpaceCameraPos.xyz - i.worldPosition);
@@ -89,7 +103,7 @@ Shader "Unlit/05_RimLight"
 
 				if(sDot >= 0.9)
 				{
-					return specular;
+					//return specular;
 				}
 				
 				//リムライト
@@ -104,22 +118,28 @@ Shader "Unlit/05_RimLight"
 				{
 					sIntensity = 0;
 				}
-                fixed4 rim = pow(sIntensity, 100) * _RimColor;
+                fixed4 rim = pow(sIntensity, 100) * fixed4(0,0,0,1);
                 
-				if(sIntensity >= 0.9)
+				if(sIntensity >= 0.99999)
 				{
-					return rim;
-				}
-
-				if(sIntensity >= 0.999)
-				{
-					return rim;
+					//return rim;
 				}
 
 				//Phong
 				fixed4 phong = ambient + col + toon;
+				
+				//shadow
+				float shadow = SHADOW_ATTENUATION(i);
+				phong.rgb *= shadow;
 
-				return phong;
+				fixed4 fogColor = fixed4(0.6, 0.7, 1.0 ,1); 
+				float fog = smoothstep(5,130,i.distance);
+
+				phong.rgb += fog;
+
+				fixed4 newColor = lerp(phong, fogColor, fog);
+
+				return newColor;
 			}
 			ENDCG
 		}

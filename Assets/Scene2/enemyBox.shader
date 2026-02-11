@@ -1,14 +1,15 @@
-Shader "Unlit/05_RimLight"
+Shader "Unlit/enemyBox"
 {
 	Properties
 	{
 		_Color("Color",Color) = (1,0,0,1)
-		_RimColor("RimColor",Color)  = (0,0,0,1)
 		_MainTex ("Texture", 2D) = "white" {}
 	}
 
 	SubShader
 	{
+		Cull Off
+
 		Pass
 		{
 			CGPROGRAM
@@ -18,7 +19,6 @@ Shader "Unlit/05_RimLight"
             #include "Lighting.cginc"
 
             fixed4  _Color;
-			fixed4 _RimColor;
 
             struct appdata
             {
@@ -63,7 +63,7 @@ Shader "Unlit/05_RimLight"
 				fixed4 col = tex2D(_MainTex, i.uv * tiling + offset);
 
 				//アンビエント
-				fixed4 ambient = _Color * -1.5 * _LightColor0;
+				fixed4 ambient = _Color * -1 * _LightColor0;
 
 				//ディフューズ
 				float iDot = dot(normalize(i.normal),_WorldSpaceLightPos0);
@@ -74,6 +74,10 @@ Shader "Unlit/05_RimLight"
                 {
                     toonColor = -3;
                 }
+                // if(toonColor <= 0.2)
+                // {
+                //     toonColor = 0.2;
+                // }
 				fixed4 toon = color * toonColor *  _LightColor0;
 
 				//スペキュラ
@@ -89,7 +93,7 @@ Shader "Unlit/05_RimLight"
 
 				if(sDot >= 0.9)
 				{
-					return specular;
+					//return specular;
 				}
 				
 				//リムライト
@@ -104,16 +108,11 @@ Shader "Unlit/05_RimLight"
 				{
 					sIntensity = 0;
 				}
-                fixed4 rim = pow(sIntensity, 100) * _RimColor;
+                fixed4 rim = pow(sIntensity, 100) * fixed4(0,0,0.9,1);
                 
 				if(sIntensity >= 0.9)
 				{
-					return rim;
-				}
-
-				if(sIntensity >= 0.999)
-				{
-					return rim;
+					//return rim;
 				}
 
 				//Phong

@@ -7,8 +7,8 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: 05_RimLight
-  m_Shader: {fileID: 4800000, guid: f618bc84fb017cb45989995beae9843e, type: 3}
+  m_Name: enemy
+  m_Shader: {fileID: 4800000, guid: a59412796db625c44a7a71860c8e03e9, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
   m_ValidKeywords: []
@@ -24,12 +24,12 @@ Material:
     serializedVersion: 3
     m_TexEnvs:
     - _MainTex:
-        m_Texture: {fileID: 2800000, guid: 3b915c253a6cebc48a5efb2b4a51354e, type: 3}
+        m_Texture: {fileID: 2800000, guid: fb99c8fbf403d944e87f7cf3c188705a, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats: []
     m_Colors:
-    - _Color: {r: 0.26415092, g: 0.26415092, b: 0.26415092, a: 1}
+    - _Color: {r: 0, g: 0, b: 0, a: 1}
     - _RimColor: {r: 0, g: 0, b: 0, a: 1}
   m_BuildTextureStacks: []
