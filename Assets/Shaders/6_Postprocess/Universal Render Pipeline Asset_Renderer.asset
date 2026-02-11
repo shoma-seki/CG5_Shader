@@ -147,7 +147,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: edda53988ffe47849b6b77d04b0862ab, type: 3}
   m_Name: DOF_CocRenderFeature
   m_EditorClassIdentifier: Assembly-CSharp::DOF_CocRenderFeature
-  m_Active: 0
+  m_Active: 1
   depthMaterial_: {fileID: 2100000, guid: b8cbd2167a5d2ea459936be34cfd2ca9, type: 2}
   lowBlurMaterial_: {fileID: 2100000, guid: 003b01eaf6be16c44ad0d543be6f6c95, type: 2}
   middleBlurMaterial_: {fileID: 2100000, guid: 80bb9d3d497f4c040ba841c850f8f34d, type: 2}

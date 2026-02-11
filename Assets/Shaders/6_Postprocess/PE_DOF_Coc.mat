@@ -43,8 +43,8 @@ Material:
     m_Floats:
     - _BlurLevelWidth: 0.05
     - _FNumber: 2.8
-    - _FocalLengthMilimeter: 35
-    - _FocusDistance: 11.13
+    - _FocalLengthMilimeter: 88.8
+    - _FocusDistance: 9.9
     - _HighBlurLevel: 0.3
     - _LowBlurLevel: 0.05
     - _MiddleBlurLevel: 0.1
